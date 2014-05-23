@@ -28,7 +28,7 @@ public class ThisIsMyJamStatus implements SocialStatus {
 	}
 	
 	@Override
-    public String toString() {
-	    return "ThisIsMyJamStatus [title=" + title + ", artist=" + artist + ", created=" + created + "]";
-    }
+	public String toString() {
+		return "ThisIsMyJamStatus [title=" + title + ", artist=" + artist + ", created=" + created + "]";
+	}
 }

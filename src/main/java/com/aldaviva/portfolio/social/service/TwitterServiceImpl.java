@@ -18,25 +18,25 @@ import twitter4j.User;
 public class TwitterServiceImpl implements TwitterService {
 
 	@Inject private Twitter twitterClient;
-	
+
 	@Value("${twitter.username}") private String username;
-	
+
 	@Async
 	@Override
 	public ListenableFuture<TwitterStatus> getCurrentStatus() {
 		final SettableFuture<TwitterStatus> future = SettableFuture.create();
 		try {
 			final TwitterStatus result = new TwitterStatus();
-	        final User user = twitterClient.showUser(username);
-	        final Status currentStatus = user.getStatus();
-	        
+			final User user = twitterClient.showUser(username);
+			final Status currentStatus = user.getStatus();
+
 			result.setBody(currentStatus.getText());
-	        result.setCreated(new DateTime(currentStatus.getCreatedAt()));
-	        future.set(result);
-	        
-        } catch (final twitter4j.TwitterException e) {
-	        future.setException(new SocialException.TwitterException("Failed to get current Twitter status", e));
-        }
+			result.setCreated(new DateTime(currentStatus.getCreatedAt()));
+			future.set(result);
+
+		} catch (final twitter4j.TwitterException e) {
+			future.setException(new SocialException.TwitterException("Failed to get current Twitter status", e));
+		}
 		return future;
 	}
 

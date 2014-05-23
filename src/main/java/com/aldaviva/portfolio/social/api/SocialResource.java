@@ -24,16 +24,16 @@ public class SocialResource {
 
 	@GET
 	public void getSocial(@Suspended final AsyncResponse res) throws SocialException, InterruptedException {
-	    Futures.addCallback(compoundStatusService.getCompoundStatus(), new FutureCallback<CompoundStatus>(){
+		Futures.addCallback(compoundStatusService.getCompoundStatus(), new FutureCallback<CompoundStatus>() {
 			@Override
-            public void onSuccess(final CompoundStatus compoundStatus) {
+			public void onSuccess(final CompoundStatus compoundStatus) {
 				res.resume(compoundStatus);
-            }
-	    	
+			}
+
 			@Override
 			public void onFailure(final Throwable t) {
 				res.resume(t);
 			}
-	    });
+		});
 	}
 }

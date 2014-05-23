@@ -21,8 +21,8 @@ public class TwitterStatus implements SocialStatus {
 	}
 
 	@Override
-    public String toString() {
-	    return "TwitterStatus [body=" + body + ", created=" + created + "]";
-    }
+	public String toString() {
+		return "TwitterStatus [body=" + body + ", created=" + created + "]";
+	}
 	
 }

@@ -9,7 +9,8 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-@Order(0) //run before the default Jersey SpringWebApplicationInitializer
+@Order(0)
+//run before the default Jersey SpringWebApplicationInitializer
 public class SpringConfig implements WebApplicationInitializer {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpringConfig.class);
@@ -17,7 +18,7 @@ public class SpringConfig implements WebApplicationInitializer {
 	static final String PACKAGE_SCAN = "com.aldaviva.portfolio.social";
 
 	@Override
-    public void onStartup(final ServletContext servletContext) throws ServletException {
+	public void onStartup(final ServletContext servletContext) throws ServletException {
 		servletContext.setInitParameter("contextConfigLocation", ""); //prevent Jersey from also initializing Spring
 
 		final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();

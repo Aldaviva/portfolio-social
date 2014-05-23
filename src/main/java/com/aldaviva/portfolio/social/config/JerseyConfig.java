@@ -12,15 +12,6 @@ public class JerseyConfig extends ResourceConfig {
 
 	public JerseyConfig() {
 		register(Jackson2Feature.class);
-//		registerInstances(new CrossOriginFilter());
 		packages(SpringConfig.PACKAGE_SCAN);
 	}
-
-	/*private static final class CrossOriginFilter implements ContainerResponseFilter {
-
-		@Override
-		public void filter(final ContainerRequestContext requestContext, final ContainerResponseContext responseContext) throws IOException {
-			responseContext.getHeaders().add("Access-Control-Allow-Origin", "*");
-		}
-	}*/
 }

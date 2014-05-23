@@ -15,23 +15,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class JacksonConfig implements ContextResolver<ObjectMapper> {
 
 	@Autowired private ObjectMapper objectMapper;
-	
+
 	@Override
-    public ObjectMapper getContext(final Class<?> type) {
+	public ObjectMapper getContext(final Class<?> type) {
 		return objectMapper;
 	}
 
 	/** New version of {@link org.glassfish.jersey.jackson.JacksonFeature JacksonFeature} for Jackson 2. */
 	public static final class Jackson2Feature implements Feature {
-	    @Override
-        public boolean configure(final FeatureContext context) {
-	        final String disableMoxy = CommonProperties.MOXY_JSON_FEATURE_DISABLE + '.'
-	                + context.getConfiguration().getRuntimeType().name().toLowerCase();
-	        context.property(disableMoxy, true);
+		@Override
+		public boolean configure(final FeatureContext context) {
+			final String disableMoxy = CommonProperties.MOXY_JSON_FEATURE_DISABLE + '.'
+			    + context.getConfiguration().getRuntimeType().name().toLowerCase();
+			context.property(disableMoxy, true);
 
-	        context.register(JacksonJaxbJsonProvider.class, MessageBodyReader.class, MessageBodyWriter.class);
-	        return true;
-	    }
+			context.register(JacksonJaxbJsonProvider.class, MessageBodyReader.class, MessageBodyWriter.class);
+			return true;
+		}
 	}
 
 }

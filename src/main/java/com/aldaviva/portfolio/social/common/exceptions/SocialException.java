@@ -11,28 +11,28 @@ public class SocialException extends Exception {
 	public SocialException(final String message, final Exception e) {
 		super(message, e);
 	}
-	
+
 	public static class TwitterException extends SocialException {
-		
+
 		private static final long serialVersionUID = 1L;
-		
+
 		public TwitterException(final Exception e) {
 			super(e);
 		}
-		
+
 		public TwitterException(final String message, final Exception e) {
 			super(message, e);
 		}
 	}
-	
+
 	public static class ThisIsMyJamException extends SocialException {
-		
+
 		private static final long serialVersionUID = 1L;
-		
+
 		public ThisIsMyJamException(final Exception e) {
 			super(e);
 		}
-		
+
 		public ThisIsMyJamException(final String message, final Exception e) {
 			super(message, e);
 		}

@@ -32,11 +32,11 @@ public class ApplicationConfig implements AsyncConfigurer {
 
 	@Bean
 	public Twitter twitterClient(
-		@Value("${twitter.oauth.consumerKey}") final String consumerKey,
-		@Value("${twitter.oauth.consumerSecret}") final String consumerSecret,
-		@Value("${twitter.oauth.accessToken}") final String accessToken,
-		@Value("${twitter.oauth.accessTokenSecret}") final String accessTokenSecret
-	){
+	    @Value("${twitter.oauth.consumerKey}") final String consumerKey,
+	    @Value("${twitter.oauth.consumerSecret}") final String consumerSecret,
+	    @Value("${twitter.oauth.accessToken}") final String accessToken,
+	    @Value("${twitter.oauth.accessTokenSecret}") final String accessTokenSecret
+	    ) {
 		final ConfigurationBuilder config = new ConfigurationBuilder();
 		config.setOAuthConsumerKey(consumerKey);
 		config.setOAuthConsumerSecret(consumerSecret);
@@ -44,9 +44,9 @@ public class ApplicationConfig implements AsyncConfigurer {
 		config.setOAuthAccessTokenSecret(accessTokenSecret);
 		return new TwitterFactory(config.build()).getInstance();
 	}
-	
+
 	@Bean
-	public Client httpClient(){
+	public Client httpClient() {
 		final ClientConfig config = new ClientConfig();
 		config.register(Jackson2Feature.class);
 		config.property(ClientProperties.CONNECT_TIMEOUT, 5000);
@@ -54,22 +54,22 @@ public class ApplicationConfig implements AsyncConfigurer {
 		config.connectorProvider(new ApacheConnectorProvider());
 		return ClientBuilder.newClient(config);
 	}
-	
+
 	@Bean
 	public ObjectMapper objectMapper() {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new JodaModule());
 		return objectMapper;
 	}
-	
+
 	@Bean
-	public ListeningExecutorService executorService(){
+	public ListeningExecutorService executorService() {
 		return MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
 	}
 
 	@Override
-    public Executor getAsyncExecutor() {
-	    return executorService();
-    }
+	public Executor getAsyncExecutor() {
+		return executorService();
+	}
 
 }

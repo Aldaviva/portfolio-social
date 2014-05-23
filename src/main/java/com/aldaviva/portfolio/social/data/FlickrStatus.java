@@ -26,7 +26,7 @@ public class FlickrStatus implements SocialStatus {
 	}
 	
 	@Override
-    public String toString() {
-	    return "FlickrStatus [photoPageUrl=" + photoPageUrl + ", thumbnailUrl=" + thumbnailUrl + ", title=" + title + "]";
-    }
+	public String toString() {
+		return "FlickrStatus [photoPageUrl=" + photoPageUrl + ", thumbnailUrl=" + thumbnailUrl + ", title=" + title + "]";
+	}
 }

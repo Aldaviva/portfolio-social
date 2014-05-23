@@ -34,9 +34,8 @@ public class CompoundStatus {
 		this.flickrStatus = flickrStatus;
 	}
 	
-	
 	@Override
-    public String toString() {
-	    return "CompoundStatus [twitterStatus=" + twitterStatus + ", thisIsMyJamStatus=" + thisIsMyJamStatus + ", flickrStatus=" + flickrStatus + "]";
-    }
+	public String toString() {
+		return "CompoundStatus [twitterStatus=" + twitterStatus + ", thisIsMyJamStatus=" + thisIsMyJamStatus + ", flickrStatus=" + flickrStatus + "]";
+	}
 }
