@@ -1,0 +1,7 @@
+/target
+/.settings
+/.classpath
+/.project
+/src/main/resources/META-INF/prod/flickr.properties
+/src/main/resources/META-INF/prod/twitter.properties
+/src/main/resources/META-INF/dev/*.properties
