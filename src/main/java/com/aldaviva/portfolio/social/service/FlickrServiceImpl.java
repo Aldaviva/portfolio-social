@@ -30,8 +30,8 @@ public class FlickrServiceImpl implements FlickrService {
 	@Value("${flickr.auth.apikey}") private String apiKey;
 
 	private static final String ROOT_API_URL = "https://api.flickr.com/services/rest/";
-	private static final String PHOTO_URL_TEMPLATE = "http://farm{farm}.static.flickr.com/{server}/{id}_{secret}_m.jpg";
-	private static final String PHOTO_PAGE_URL_TEMPLATE = "http://www.flickr.com/photos/{uservanityurl}/{id}";
+	private static final String PHOTO_URL_TEMPLATE = "https://farm{farm}.static.flickr.com/{server}/{id}_{secret}_m.jpg";
+	private static final String PHOTO_PAGE_URL_TEMPLATE = "https://www.flickr.com/photos/{uservanityurl}/{id}";
 
 	@Async
 	@Override
