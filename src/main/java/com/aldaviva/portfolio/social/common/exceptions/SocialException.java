@@ -37,16 +37,29 @@ public class SocialException extends Exception {
 			super(message, e);
 		}
 	}
-
+	
 	public static class FlickrException extends SocialException {
-
+		
 		private static final long serialVersionUID = 1L;
-
+		
 		public FlickrException(final Exception e) {
 			super(e);
 		}
-
+		
 		public FlickrException(final String message, final Exception e) {
+			super(message, e);
+		}
+	}
+
+	public static class GoogleCalendarException extends SocialException {
+
+		private static final long serialVersionUID = 1L;
+
+		public GoogleCalendarException(final Exception e) {
+			super(e);
+		}
+
+		public GoogleCalendarException(final String message, final Exception e) {
 			super(message, e);
 		}
 	}

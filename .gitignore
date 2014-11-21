@@ -6,3 +6,4 @@
 /src/main/resources/META-INF/prod/thisismyjam.properties
 /src/main/resources/META-INF/prod/flickr.properties
 /src/main/resources/META-INF/dev/*.properties
+calendar_key.p12
