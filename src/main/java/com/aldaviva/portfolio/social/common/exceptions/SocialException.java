@@ -7,6 +7,10 @@ public class SocialException extends Exception {
 	private SocialException(final Exception e) {
 		super(e);
 	}
+	
+	public SocialException(final String message) {
+		super(message);
+	}
 
 	public SocialException(final String message, final Exception e) {
 		super(message, e);
@@ -19,7 +23,11 @@ public class SocialException extends Exception {
 		public TwitterException(final Exception e) {
 			super(e);
 		}
-
+		
+		public TwitterException(final String message) {
+			super(message);
+		}
+		
 		public TwitterException(final String message, final Exception e) {
 			super(message, e);
 		}
