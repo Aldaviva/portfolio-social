@@ -70,5 +70,15 @@ public class SocialException extends Exception {
 		public GoogleCalendarException(final String message, final Exception e) {
 			super(message, e);
 		}
+		
+		public static class NoCalendarEventsFound extends GoogleCalendarException {
+
+			public NoCalendarEventsFound() {
+	            super(null);
+            }
+
+			private static final long serialVersionUID = 1L;
+			
+		}
 	}
 }

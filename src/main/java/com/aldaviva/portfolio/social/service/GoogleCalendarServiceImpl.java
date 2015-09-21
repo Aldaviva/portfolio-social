@@ -93,7 +93,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 		if(!events.isEmpty()){
 			return events.get(0);
 		} else {
-			throw new SocialException.GoogleCalendarException("No calendar events found", null);
+			throw new SocialException.GoogleCalendarException.NoCalendarEventsFound();
 		}
     }
 
