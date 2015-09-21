@@ -2,12 +2,9 @@ package com.aldaviva.portfolio.social.config;
 
 import com.aldaviva.portfolio.social.config.JacksonConfig.Jackson2Feature;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
@@ -17,18 +14,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
 
 @Configuration
 @EnableScheduling
-@EnableAsync
 @ImportResource("classpath:META-INF/spring/context-property-placeholder.xml")
-public class ApplicationConfig implements AsyncConfigurer {
+public class ApplicationConfig {
 
 	@Bean
 	public Twitter twitterClient(
@@ -59,10 +55,19 @@ public class ApplicationConfig implements AsyncConfigurer {
 	public ObjectMapper objectMapper() {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.registerModule(new JodaModule());
+		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+		objectMapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL);
 		return objectMapper;
 	}
-
+	
 	@Bean
+	public TaskScheduler taskScheduler(){
+		final ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
+		threadPoolTaskScheduler.setPoolSize(5);
+		return threadPoolTaskScheduler;
+	}
+
+	/*@Bean
 	public ListeningExecutorService executorService() {
 		return MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
 	}
@@ -70,6 +75,6 @@ public class ApplicationConfig implements AsyncConfigurer {
 	@Override
 	public Executor getAsyncExecutor() {
 		return executorService();
-	}
+	}*/
 
 }

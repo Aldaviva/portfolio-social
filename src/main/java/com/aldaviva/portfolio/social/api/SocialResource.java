@@ -35,24 +35,24 @@ public class SocialResource {
 	@GET
 	@Path("twitter/{username}")
 	public TwitterStatus getTwitterStatus(@PathParam("username") final String username) throws SocialException{
-		return twitterService.getCurrentStatus(new TwitterOwner(username));
+		return twitterService.getCachedCurrentStatus(new TwitterOwner(username));
 	}
 	
 	@GET
 	@Path("flickr/{userid}/{vanitypath}")
 	public FlickrStatus getFlickrStatus(@PathParam("userid") final String userId, @PathParam("vanitypath") final String vanityPath) throws SocialException{
-		return flickrService.getCurrentStatus(new FlickrOwner(userId, vanityPath));
+		return flickrService.getCachedCurrentStatus(new FlickrOwner(userId, vanityPath));
 	}
 	
 	@GET
 	@Path("thisismyjam/{username}")
 	public ThisIsMyJamStatus getThisIsMyJamStatus(@PathParam("username") final String username) throws SocialException{
-		return thisIsMyJamService.getCurrentStatus(new ThisIsMyJamOwner(username));
+		return thisIsMyJamService.getCachedCurrentStatus(new ThisIsMyJamOwner(username));
 	}
 	
 	@GET
 	@Path("googlecalendar/{calendarId}")
 	public GoogleCalendarStatus getGoogleCalendarStatus(@PathParam("calendarId") final String calendarId) throws SocialException{
-		return googleCalendarService.getCurrentStatus(new GoogleCalendarOwner(calendarId));
+		return googleCalendarService.getCachedCurrentStatus(new GoogleCalendarOwner(calendarId));
 	}
 }

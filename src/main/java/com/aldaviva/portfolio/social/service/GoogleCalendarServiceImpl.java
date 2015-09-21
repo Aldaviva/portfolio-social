@@ -4,6 +4,7 @@ import com.aldaviva.portfolio.social.common.exceptions.SocialException;
 import com.aldaviva.portfolio.social.common.exceptions.SocialException.GoogleCalendarException;
 import com.aldaviva.portfolio.social.data.GoogleCalendarOwner;
 import com.aldaviva.portfolio.social.data.GoogleCalendarStatus;
+import com.aldaviva.portfolio.social.service.cache.CachedSocialServiceImpl;
 
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class GoogleCalendarServiceImpl implements GoogleCalendarService {
+public class GoogleCalendarServiceImpl extends CachedSocialServiceImpl<GoogleCalendarStatus, GoogleCalendarOwner> implements GoogleCalendarService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GoogleCalendarServiceImpl.class);
 	private static final String ORDERBY_STARTTIME = "startTime";

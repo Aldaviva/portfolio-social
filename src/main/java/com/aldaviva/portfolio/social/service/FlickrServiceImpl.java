@@ -4,6 +4,7 @@ import com.aldaviva.portfolio.social.common.exceptions.SocialException;
 import com.aldaviva.portfolio.social.common.exceptions.SocialException.FlickrException;
 import com.aldaviva.portfolio.social.data.FlickrOwner;
 import com.aldaviva.portfolio.social.data.FlickrStatus;
+import com.aldaviva.portfolio.social.service.cache.CachedSocialServiceImpl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,7 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FlickrServiceImpl implements FlickrService {
+public class FlickrServiceImpl extends CachedSocialServiceImpl<FlickrStatus, FlickrOwner> implements FlickrService {
 
 	@Inject private Client webClient;
 	@Inject private ObjectMapper objectMapper;

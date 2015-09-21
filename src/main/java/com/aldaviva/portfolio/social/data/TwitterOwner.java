@@ -15,6 +15,11 @@ public class TwitterOwner implements SocialOwner {
 	public void setUsername(final String username) {
 		this.username = username;
 	}
+
+	@Override
+    public String getCacheKey() {
+	    return "twitter."+getUsername();
+    }
 	
 	
 }

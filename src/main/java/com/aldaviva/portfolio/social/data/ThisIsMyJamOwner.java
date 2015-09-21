@@ -16,4 +16,9 @@ public class ThisIsMyJamOwner implements SocialOwner {
 		this.username = username;
 	}
 
+	@Override
+    public String getCacheKey() {
+	    return "thisismyjam."+getUsername();
+    }
+
 }

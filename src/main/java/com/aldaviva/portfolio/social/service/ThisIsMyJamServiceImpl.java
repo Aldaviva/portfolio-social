@@ -4,6 +4,7 @@ import com.aldaviva.portfolio.social.common.exceptions.SocialException;
 import com.aldaviva.portfolio.social.common.exceptions.SocialException.ThisIsMyJamException;
 import com.aldaviva.portfolio.social.data.ThisIsMyJamOwner;
 import com.aldaviva.portfolio.social.data.ThisIsMyJamStatus;
+import com.aldaviva.portfolio.social.service.cache.CachedSocialServiceImpl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import javax.inject.Inject;
@@ -15,7 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ThisIsMyJamServiceImpl implements ThisIsMyJamService {
+public class ThisIsMyJamServiceImpl extends CachedSocialServiceImpl<ThisIsMyJamStatus, ThisIsMyJamOwner> implements ThisIsMyJamService {
 
 	@Inject private Client webClient;
 

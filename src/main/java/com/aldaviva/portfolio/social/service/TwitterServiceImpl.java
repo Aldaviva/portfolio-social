@@ -4,6 +4,7 @@ import com.aldaviva.portfolio.social.common.exceptions.SocialException;
 import com.aldaviva.portfolio.social.common.exceptions.SocialException.TwitterException;
 import com.aldaviva.portfolio.social.data.TwitterOwner;
 import com.aldaviva.portfolio.social.data.TwitterStatus;
+import com.aldaviva.portfolio.social.service.cache.CachedSocialServiceImpl;
 
 import javax.inject.Inject;
 import org.joda.time.DateTime;
@@ -14,7 +15,7 @@ import twitter4j.Status;
 import twitter4j.Twitter;
 
 @Service
-public class TwitterServiceImpl implements TwitterService {
+public class TwitterServiceImpl extends CachedSocialServiceImpl<TwitterStatus, TwitterOwner> implements TwitterService {
 
 	@Inject private Twitter twitterClient;
 

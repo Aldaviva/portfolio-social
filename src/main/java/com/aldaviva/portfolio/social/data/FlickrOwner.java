@@ -26,4 +26,9 @@ public class FlickrOwner implements SocialOwner {
 		this.vanityPath = vanityPath;
 	}
 
+	@Override
+    public String getCacheKey() {
+	    return "flickr."+getUserId();
+    }
+
 }

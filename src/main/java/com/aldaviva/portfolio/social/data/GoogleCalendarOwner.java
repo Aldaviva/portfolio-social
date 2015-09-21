@@ -16,4 +16,9 @@ public class GoogleCalendarOwner implements SocialOwner {
 		this.calendarId = calendarId;
 	}
 
+	@Override
+    public String getCacheKey() {
+	    return "googlecalendar."+getCalendarId();
+    }
+
 }
