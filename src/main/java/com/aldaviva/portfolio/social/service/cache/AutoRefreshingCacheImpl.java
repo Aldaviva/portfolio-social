@@ -12,18 +12,21 @@ import org.springframework.stereotype.Component;
 public class AutoRefreshingCacheImpl implements AutoRefreshingCache {
 
 	@Autowired private TaskScheduler taskScheduler;
-	
+
 	public Map<String, CacheEntry<?>> cache = new ConcurrentHashMap<>();
 
 	@Override
 	public <T> T get(final String key, final ValueGetter<T> valueGetter, final long millisBetweenUpdates) {
+		@SuppressWarnings("unchecked")
 		CacheEntry<T> entry = (CacheEntry<T>) cache.get(key);
 		if(entry == null) {
 			entry = new CacheEntry<>();
 			entry.valueGetter = valueGetter;
 			entry.updateValue();
-			entry.canceller = taskScheduler.scheduleWithFixedDelay(new UpdateTask(entry), 
-				new DateTime().plus(millisBetweenUpdates).toDate(), millisBetweenUpdates);
+			if(millisBetweenUpdates > 0) {
+				entry.canceller = taskScheduler.scheduleWithFixedDelay(new UpdateTask(entry),
+				    new DateTime().plus(millisBetweenUpdates).toDate(), millisBetweenUpdates);
+			}
 			cache.put(key, entry);
 		}
 

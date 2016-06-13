@@ -25,8 +25,6 @@ public class FlickrServiceImpl extends CachedSocialServiceImpl<FlickrStatus, Fli
 	@Inject private Client webClient;
 	@Inject private ObjectMapper objectMapper;
 
-//	@Value("${flickr.userid}") private String userId;
-//	@Value("${flickr.uservanityurl}") private String userVanityUrl;
 	@Value("${flickr.auth.apikey}") private String apiKey;
 
 	private static final String ROOT_API_URL = "https://api.flickr.com/services/rest/";

@@ -6,6 +6,9 @@ import com.aldaviva.portfolio.social.data.TwitterOwner;
 import com.aldaviva.portfolio.social.data.TwitterStatus;
 import com.aldaviva.portfolio.social.service.cache.CachedSocialServiceImpl;
 
+import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.regex.Pattern;
 import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
@@ -17,31 +20,32 @@ import twitter4j.Twitter;
 @Service
 public class TwitterServiceImpl extends CachedSocialServiceImpl<TwitterStatus, TwitterOwner> implements TwitterService {
 
+	private static Collection<Pattern> SHORT_URL_PATTERNS = ImmutableList.of(Pattern.compile("https:\\/\\/t\\.co\\/\\w+"));
+
 	@Inject private Twitter twitterClient;
 
 	@Override
 	public TwitterStatus getCurrentStatus(final TwitterOwner owner) throws TwitterException {
 		try {
-			final TwitterStatus result = new TwitterStatus();
-			
+			final TwitterStatus twitterStatus = new TwitterStatus();
+
 			final ResponseList<Status> userTimeline = twitterClient.getUserTimeline(owner.getUsername(), new Paging(1, 200));
-			
+
 			Status latestNonReplyStatus = null;
 			for(final Status status : userTimeline) {
-	            if(status.getInReplyToUserId() == -1){
-	            	latestNonReplyStatus = status;
-	            	break;
-	            }
-            }
-			
-			if(latestNonReplyStatus != null){
-				result.setBody(latestNonReplyStatus.getText());
-				result.setCreated(new DateTime(latestNonReplyStatus.getCreatedAt()));
-				return result;
-			} else {
-				throw new SocialException.TwitterException("The last 200 tweets from "+owner.getUsername()+" were replies, and we want a non-reply tweet.");
+				if(status.getInReplyToUserId() == -1) {
+					latestNonReplyStatus = status;
+					break;
+				}
 			}
 
+			if(latestNonReplyStatus != null) {
+				twitterStatus.setBody(expandShortUrls(latestNonReplyStatus.getText(), SHORT_URL_PATTERNS));
+				twitterStatus.setCreated(new DateTime(latestNonReplyStatus.getCreatedAt()));
+				return twitterStatus;
+			} else {
+				throw new SocialException.TwitterException("The last 200 tweets from " + owner.getUsername() + " were replies, and we want a non-reply tweet.");
+			}
 
 		} catch (final twitter4j.TwitterException e) {
 			throw new SocialException.TwitterException("Failed to get current Twitter status", e);

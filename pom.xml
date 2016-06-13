@@ -158,6 +158,27 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		<!-- Testing -->
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-testng</artifactId>
+			<version>1.6.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>1.6.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

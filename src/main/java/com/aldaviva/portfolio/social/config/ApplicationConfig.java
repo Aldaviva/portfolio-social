@@ -31,8 +31,8 @@ public class ApplicationConfig {
 	    @Value("${twitter.oauth.consumerKey}") final String consumerKey,
 	    @Value("${twitter.oauth.consumerSecret}") final String consumerSecret,
 	    @Value("${twitter.oauth.accessToken}") final String accessToken,
-	    @Value("${twitter.oauth.accessTokenSecret}") final String accessTokenSecret
-	    ) {
+	    @Value("${twitter.oauth.accessTokenSecret}") final String accessTokenSecret) {
+
 		final ConfigurationBuilder config = new ConfigurationBuilder();
 		config.setOAuthConsumerKey(consumerKey);
 		config.setOAuthConsumerSecret(consumerSecret);
@@ -47,6 +47,7 @@ public class ApplicationConfig {
 		config.register(Jackson2Feature.class);
 		config.property(ClientProperties.CONNECT_TIMEOUT, 5000);
 		config.property(ClientProperties.READ_TIMEOUT, 5000);
+		config.property(ClientProperties.FOLLOW_REDIRECTS, true);
 		config.connectorProvider(new ApacheConnectorProvider());
 		return ClientBuilder.newClient(config);
 	}
@@ -59,22 +60,12 @@ public class ApplicationConfig {
 		objectMapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL);
 		return objectMapper;
 	}
-	
+
 	@Bean
-	public TaskScheduler taskScheduler(){
+	public TaskScheduler taskScheduler() {
 		final ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
 		threadPoolTaskScheduler.setPoolSize(5);
 		return threadPoolTaskScheduler;
 	}
-
-	/*@Bean
-	public ListeningExecutorService executorService() {
-		return MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
-	}
-
-	@Override
-	public Executor getAsyncExecutor() {
-		return executorService();
-	}*/
 
 }
