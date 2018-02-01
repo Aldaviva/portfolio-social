@@ -100,4 +100,50 @@ public class ShortUrlExpanderServiceTest extends AbstractInjectedTest {
 		verify(shortUrlExpanderService).sendRequest(eq(longUrl));
 		verify(response3).close();
 	}
+
+	@Test
+	public void relativeRedirection() {
+		final String[] absoluteUrls = new String[] {
+		    "https://t.co/0uZCakB1Vi",
+		    "https://flic.kr/p/23NrJtU",
+		    "https://www.flickr.com/photo.gne?short=23NrJtU",
+		    "https://www.flickr.com/photo.gne?rb=1&short=23NrJtU",
+		    "https://www.flickr.com/photos/benhutchison/39906985602/"
+		};
+
+		final String[] locationHeaders = new String[] {
+		    "https://t.co/0uZCakB1Vi",
+		    "https://flic.kr/p/23NrJtU",
+		    "https://www.flickr.com/photo.gne?short=23NrJtU",
+		    "/photo.gne?rb=1&short=23NrJtU",
+		    "/photos/benhutchison/39906985602/"
+		};
+
+		final Response[] responses = new Response[absoluteUrls.length];
+
+		for(int i = 0; i < absoluteUrls.length; i++) {
+			final String requestUrl = absoluteUrls[i];
+			final Response response = mock(Response.class);
+			doReturn(response).when(shortUrlExpanderService).sendRequest(eq(requestUrl));
+
+			if(locationHeaders.length > i + 1) {
+				final String nextUrl = locationHeaders[i + 1];
+				when(response.getStatusInfo()).thenReturn(Status.MOVED_PERMANENTLY);
+				when(response.getHeaderString(HttpHeaders.LOCATION)).thenReturn(nextUrl);
+			} else {
+				when(response.getStatusInfo()).thenReturn(Status.OK);
+				when(response.getHeaderString(HttpHeaders.LOCATION)).thenReturn(null);
+			}
+
+			responses[i] = response;
+		}
+
+		final String actual = shortUrlExpanderService.fetchLongUrl(absoluteUrls[0]);
+		assertEquals(actual, absoluteUrls[absoluteUrls.length - 1]);
+
+		for(int i = 0; i < absoluteUrls.length; i++) {
+			verify(shortUrlExpanderService).sendRequest(eq(absoluteUrls[i]));
+			verify(responses[i]).close();
+		}
+	}
 }

@@ -3,6 +3,8 @@ package com.aldaviva.portfolio.social.service;
 import com.aldaviva.portfolio.social.service.cache.AutoRefreshingCache;
 import com.aldaviva.portfolio.social.service.cache.ValueGetter;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.HttpHeaders;
@@ -50,16 +52,26 @@ public class ShortUrlExpanderServiceImpl implements ShortUrlExpanderService {
 
 				responseStatus = response.getStatusInfo();
 				isRedirectionResponse = responseStatus.getFamily().equals(Family.REDIRECTION);
-				final String locationHeaderValue = response.getHeaderString(HttpHeaders.LOCATION);
-				if(isRedirectionResponse && StringUtils.hasText(locationHeaderValue)) {
-					LOGGER.trace("URL {} expands to {}", longestUrl, locationHeaderValue);
-					longestUrl = locationHeaderValue;
+				String location = response.getHeaderString(HttpHeaders.LOCATION);
+				if(isRedirectionResponse && StringUtils.hasText(location)) {
+					try {
+						final URI locationUri = new URI(location);
+						if(!locationUri.isAbsolute()) {
+							final URI origin = new URI(longestUrl).resolve("/");
+							location = origin.resolve(locationUri).toString();
+						}
+						LOGGER.trace("URL {} expands to {}", longestUrl, location);
+						longestUrl = location;
+					} catch (final URISyntaxException e) {
+						LOGGER.warn("Invalid URL {} while expanding {}, using previous URL {}", location, shortUrl, longestUrl);
+						isRedirectionResponse = false;
+					}
 				}
 
 			} while(isRedirectionResponse && (--redirectCountsRemaining > 0));
 
 		} catch (final ProcessingException | IllegalArgumentException e) {
-			//return latest result below
+			LOGGER.warn("Error while expanding {}, using previous URL {}", shortUrl, longestUrl);
 		}
 
 		LOGGER.info("Short URL {} resolves to {}", shortUrl, longestUrl);
