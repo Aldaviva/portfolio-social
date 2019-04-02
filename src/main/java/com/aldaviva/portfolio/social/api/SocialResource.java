@@ -5,13 +5,10 @@ import com.aldaviva.portfolio.social.data.FlickrOwner;
 import com.aldaviva.portfolio.social.data.FlickrStatus;
 import com.aldaviva.portfolio.social.data.GoogleCalendarOwner;
 import com.aldaviva.portfolio.social.data.GoogleCalendarStatus;
-import com.aldaviva.portfolio.social.data.ThisIsMyJamOwner;
-import com.aldaviva.portfolio.social.data.ThisIsMyJamStatus;
 import com.aldaviva.portfolio.social.data.TwitterOwner;
 import com.aldaviva.portfolio.social.data.TwitterStatus;
 import com.aldaviva.portfolio.social.service.FlickrService;
 import com.aldaviva.portfolio.social.service.GoogleCalendarService;
-import com.aldaviva.portfolio.social.service.ThisIsMyJamService;
 import com.aldaviva.portfolio.social.service.TwitterService;
 
 import javax.inject.Inject;
@@ -29,30 +26,23 @@ public class SocialResource {
 
 	@Inject private TwitterService twitterService;
 	@Inject private FlickrService flickrService;
-	@Inject private ThisIsMyJamService thisIsMyJamService;
 	@Inject private GoogleCalendarService googleCalendarService;
-	
+
 	@GET
 	@Path("twitter/{username}")
-	public TwitterStatus getTwitterStatus(@PathParam("username") final String username) throws SocialException{
+	public TwitterStatus getTwitterStatus(@PathParam("username") final String username) throws SocialException {
 		return twitterService.getCachedCurrentStatus(new TwitterOwner(username));
 	}
-	
+
 	@GET
 	@Path("flickr/{userid}/{vanitypath}")
-	public FlickrStatus getFlickrStatus(@PathParam("userid") final String userId, @PathParam("vanitypath") final String vanityPath) throws SocialException{
+	public FlickrStatus getFlickrStatus(@PathParam("userid") final String userId, @PathParam("vanitypath") final String vanityPath) throws SocialException {
 		return flickrService.getCachedCurrentStatus(new FlickrOwner(userId, vanityPath));
 	}
-	
-	@GET
-	@Path("thisismyjam/{username}")
-	public ThisIsMyJamStatus getThisIsMyJamStatus(@PathParam("username") final String username) throws SocialException{
-		return thisIsMyJamService.getCachedCurrentStatus(new ThisIsMyJamOwner(username));
-	}
-	
+
 	@GET
 	@Path("googlecalendar/{calendarId}")
-	public GoogleCalendarStatus getGoogleCalendarStatus(@PathParam("calendarId") final String calendarId) throws SocialException{
+	public GoogleCalendarStatus getGoogleCalendarStatus(@PathParam("calendarId") final String calendarId) throws SocialException {
 		return googleCalendarService.getCachedCurrentStatus(new GoogleCalendarOwner(calendarId));
 	}
 }

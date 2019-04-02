@@ -38,6 +38,8 @@ public class ApplicationConfig {
 		config.setOAuthConsumerSecret(consumerSecret);
 		config.setOAuthAccessToken(accessToken);
 		config.setOAuthAccessTokenSecret(accessTokenSecret);
+		config.setTrimUserEnabled(true);
+		config.setTweetModeExtended(true);
 		return new TwitterFactory(config.build()).getInstance();
 	}
 
