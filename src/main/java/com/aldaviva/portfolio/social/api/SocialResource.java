@@ -3,11 +3,14 @@ package com.aldaviva.portfolio.social.api;
 import com.aldaviva.portfolio.social.common.exceptions.SocialException;
 import com.aldaviva.portfolio.social.data.FlickrOwner;
 import com.aldaviva.portfolio.social.data.FlickrStatus;
+import com.aldaviva.portfolio.social.data.GithubOwner;
+import com.aldaviva.portfolio.social.data.GithubStatus;
 import com.aldaviva.portfolio.social.data.GoogleCalendarOwner;
 import com.aldaviva.portfolio.social.data.GoogleCalendarStatus;
 import com.aldaviva.portfolio.social.data.TwitterOwner;
 import com.aldaviva.portfolio.social.data.TwitterStatus;
 import com.aldaviva.portfolio.social.service.FlickrService;
+import com.aldaviva.portfolio.social.service.GithubService;
 import com.aldaviva.portfolio.social.service.GoogleCalendarService;
 import com.aldaviva.portfolio.social.service.TwitterService;
 
@@ -27,6 +30,7 @@ public class SocialResource {
 	@Inject private TwitterService twitterService;
 	@Inject private FlickrService flickrService;
 	@Inject private GoogleCalendarService googleCalendarService;
+	@Inject private GithubService githubService;
 
 	@GET
 	@Path("twitter/{username}")
@@ -44,5 +48,11 @@ public class SocialResource {
 	@Path("googlecalendar/{calendarId}")
 	public GoogleCalendarStatus getGoogleCalendarStatus(@PathParam("calendarId") final String calendarId) throws SocialException {
 		return googleCalendarService.getCachedCurrentStatus(new GoogleCalendarOwner(calendarId));
+	}
+
+	@GET
+	@Path("github/{username}")
+	public GithubStatus getGithubStatus(@PathParam("username") final String username) throws SocialException {
+		return githubService.getCachedCurrentStatus(new GithubOwner(username));
 	}
 }

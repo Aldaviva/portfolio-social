@@ -8,6 +8,7 @@ import com.aldaviva.portfolio.social.common.exceptions.SocialException;
 import com.aldaviva.portfolio.social.data.SocialOwner;
 import com.aldaviva.portfolio.social.data.SocialStatus;
 import com.aldaviva.portfolio.social.service.ShortUrlExpanderService;
+import com.aldaviva.portfolio.social.service.cache.ValueGetter.ValueGetterResult;
 
 import com.google.common.collect.ImmutableList;
 import java.util.regex.Pattern;
@@ -19,15 +20,16 @@ import org.testng.annotations.Test;
 
 public class CachedSocialServiceImplTest {
 
-	@InjectMocks private CachedSocialServiceImpl<SocialStatus, SocialOwner> socialService;
+	@InjectMocks private CachedSocialServiceImpl<SocialStatus, SocialOwner, CacheIndicators> socialService;
 
 	@Mock private ShortUrlExpanderService shortUrlExpanderService;
 
 	@BeforeMethod
 	private void init() {
-		socialService = new CachedSocialServiceImpl<SocialStatus, SocialOwner>() {
+		socialService = new CachedSocialServiceImpl<SocialStatus, SocialOwner, CacheIndicators>() {
 			@Override
-			public SocialStatus getCurrentStatus(final SocialOwner owner) throws SocialException {
+			public ValueGetterResult<SocialStatus, CacheIndicators> getCurrentStatus(final SocialOwner owner, final CacheIndicators cache)
+			    throws SocialException {
 				throw new IllegalStateException("Not implemented in test");
 			}
 		};

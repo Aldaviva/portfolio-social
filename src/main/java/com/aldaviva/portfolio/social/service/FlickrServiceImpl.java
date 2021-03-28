@@ -4,9 +4,13 @@ import com.aldaviva.portfolio.social.common.exceptions.SocialException;
 import com.aldaviva.portfolio.social.common.exceptions.SocialException.FlickrException;
 import com.aldaviva.portfolio.social.data.FlickrOwner;
 import com.aldaviva.portfolio.social.data.FlickrStatus;
+import com.aldaviva.portfolio.social.service.cache.CacheIndicators.HttpCacheIndicators;
 import com.aldaviva.portfolio.social.service.cache.CachedSocialServiceImpl;
+import com.aldaviva.portfolio.social.service.cache.ValueGetter.CachedHttpResult;
+import com.aldaviva.portfolio.social.service.cache.ValueGetter.Unmodified;
+import com.aldaviva.portfolio.social.service.cache.ValueGetter.ValueGetterResult;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
@@ -15,12 +19,15 @@ import javax.inject.Inject;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FlickrServiceImpl extends CachedSocialServiceImpl<FlickrStatus, FlickrOwner> implements FlickrService {
+public class FlickrServiceImpl extends CachedSocialServiceImpl<FlickrStatus, FlickrOwner, HttpCacheIndicators> implements FlickrService {
 
 	@Inject private Client webClient;
 	@Inject private ObjectMapper objectMapper;
@@ -32,9 +39,10 @@ public class FlickrServiceImpl extends CachedSocialServiceImpl<FlickrStatus, Fli
 	private static final String PHOTO_PAGE_URL_TEMPLATE = "https://www.flickr.com/photos/{uservanityurl}/{id}";
 
 	@Override
-	public FlickrStatus getCurrentStatus(final FlickrOwner owner) throws FlickrException {
+	public ValueGetterResult<FlickrStatus, HttpCacheIndicators> getCurrentStatus(final FlickrOwner owner, final HttpCacheIndicators cache)
+	    throws FlickrException {
 		try {
-			final JsonNode responseBody = webClient.target(ROOT_API_URL)
+			final Response response = webClient.target(ROOT_API_URL)
 			    .queryParam("api_key", apiKey)
 			    .queryParam("user_id", owner.getUserId())
 			    .queryParam("format", "json")
@@ -42,7 +50,16 @@ public class FlickrServiceImpl extends CachedSocialServiceImpl<FlickrStatus, Fli
 			    .queryParam("method", "flickr.people.getPublicPhotos")
 			    .queryParam("per_page", 1)
 			    .request()
-			    .get(JsonNode.class);
+			    .header(HttpHeaders.IF_MODIFIED_SINCE, cache != null ? cache.getLastModifiedHeader() : null)
+			    .header(HttpHeaders.ETAG, cache != null ? cache.getEtag() : null)
+			    .get(Response.class); //won't throw WebApplicationException on 4xx or 5xx any more
+
+			if (response.getStatus() == Status.NOT_MODIFIED.getStatusCode()) {
+				response.close();
+				return new Unmodified<>();
+			}
+
+			final JsonNode responseBody = response.readEntity(JsonNode.class);
 
 			final JsonNode photoJSON = responseBody.get("photos").get("photo").get(0);
 			final String thumbnailUrl = getPhotoUrl(photoJSON);
@@ -53,35 +70,32 @@ public class FlickrServiceImpl extends CachedSocialServiceImpl<FlickrStatus, Fli
 			result.setPhotoPageUrl(photoPageUrl);
 			result.setThumbnailUrl(thumbnailUrl);
 			result.setTitle(title);
-			return result;
+
+			final CachedHttpResult<FlickrStatus, HttpCacheIndicators> cachedHttpResult = new CachedHttpResult<>(result, new HttpCacheIndicators(response));
+			response.close();
+			return cachedHttpResult;
 		} catch (ProcessingException | WebApplicationException e) {
 			throw new SocialException.FlickrException("Failed to get current photo from Flickr", e);
 		}
 	}
 
 	private String getPhotoUrl(final JsonNode photoJSON) {
-		try {
-			final Map<String, Object> photoMap = objectMapper.treeToValue(photoJSON, HashMap.class);
-			return UriBuilder.fromUri(PHOTO_URL_TEMPLATE)
-			    .resolveTemplates(photoMap)
-			    .build()
-			    .toString();
-		} catch (final JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		final Map<String, Object> photoMap = objectMapper.convertValue(photoJSON, new TypeReference<HashMap<String, Object>>() {
+		});
+		return UriBuilder.fromUri(PHOTO_URL_TEMPLATE)
+		    .resolveTemplates(photoMap)
+		    .build()
+		    .toString();
 	}
 
 	private String getPhotoPageUrl(final JsonNode photoJSON, final FlickrOwner owner) {
-		try {
-			final Map<String, Object> photoMap = objectMapper.treeToValue(photoJSON, HashMap.class);
-			return UriBuilder.fromUri(PHOTO_PAGE_URL_TEMPLATE)
-			    .resolveTemplate("uservanityurl", owner.getVanityPath())
-			    .resolveTemplates(photoMap)
-			    .build()
-			    .toString();
-		} catch (final JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		final Map<String, Object> photoMap = objectMapper.convertValue(photoJSON, new TypeReference<HashMap<String, Object>>() {
+		});
+		return UriBuilder.fromUri(PHOTO_PAGE_URL_TEMPLATE)
+		    .resolveTemplate("uservanityurl", owner.getVanityPath())
+		    .resolveTemplates(photoMap)
+		    .build()
+		    .toString();
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.aldaviva.portfolio.social.service;
 
 import com.aldaviva.portfolio.social.service.cache.AutoRefreshingCache;
+import com.aldaviva.portfolio.social.service.cache.CacheIndicators;
+import com.aldaviva.portfolio.social.service.cache.CacheIndicators.None;
 import com.aldaviva.portfolio.social.service.cache.ValueGetter;
 
 import java.net.URI;
@@ -22,17 +24,17 @@ public class ShortUrlExpanderServiceImpl implements ShortUrlExpanderService {
 
 	private static final org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(ShortUrlExpanderServiceImpl.class);
 
-	@Autowired private AutoRefreshingCache cache;
+	@Autowired private AutoRefreshingCache<CacheIndicators.None> cache;
 	@Autowired private Client webClient;
 
 	private static final long CACHE_DURATION = Period.weeks(1).toStandardDuration().getMillis();
 
 	@Override
 	public String expandShortUrl(final String shortUrl) {
-		return cache.get("shorturl." + shortUrl, new ValueGetter<String>() {
+		return cache.get("shorturl." + shortUrl, new ValueGetter<String, CacheIndicators.None>() {
 			@Override
-			public String getValue() {
-				return fetchLongUrl(shortUrl);
+			public ValueGetterResult<String, None> getValue(final CacheIndicators.None none) {
+				return new NonCachingResult<>(fetchLongUrl(shortUrl));
 			}
 		}, CACHE_DURATION);
 	}
@@ -53,10 +55,10 @@ public class ShortUrlExpanderServiceImpl implements ShortUrlExpanderService {
 				responseStatus = response.getStatusInfo();
 				isRedirectionResponse = responseStatus.getFamily().equals(Family.REDIRECTION);
 				String location = response.getHeaderString(HttpHeaders.LOCATION);
-				if(isRedirectionResponse && StringUtils.hasText(location)) {
+				if (isRedirectionResponse && StringUtils.hasText(location)) {
 					try {
 						final URI locationUri = new URI(location);
-						if(!locationUri.isAbsolute()) {
+						if (!locationUri.isAbsolute()) {
 							final URI origin = new URI(longestUrl).resolve("/");
 							location = origin.resolve(locationUri).toString();
 						}
@@ -68,7 +70,7 @@ public class ShortUrlExpanderServiceImpl implements ShortUrlExpanderService {
 					}
 				}
 
-			} while(isRedirectionResponse && (--redirectCountsRemaining > 0));
+			} while (isRedirectionResponse && (--redirectCountsRemaining > 0));
 
 		} catch (final ProcessingException | IllegalArgumentException e) {
 			LOGGER.warn("Error while expanding {}, using previous URL {}", shortUrl, longestUrl);
