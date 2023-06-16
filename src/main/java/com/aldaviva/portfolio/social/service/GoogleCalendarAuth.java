@@ -27,7 +27,7 @@ public class GoogleCalendarAuth {
 	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(HttpTransport.class);
 	private static final String ACCOUNT_ID = "966028723158-goc7b14ff39duk3a0t54nrha43qtlr5q@developer.gserviceaccount.com";
 	private static final String KEY_FILENAME = "/META-INF/calendar_key.p12";
-	private static final JsonFactory JACKSON_FACTORY = GsonFactory.getDefaultInstance();
+	private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 	private static final NetHttpTransport NET_HTTP_TRANSPORT = new NetHttpTransport();
 
 	public GoogleCalendarAuth() {
@@ -36,13 +36,13 @@ public class GoogleCalendarAuth {
 
 	@Bean
 	public Calendar getCalendar() throws GeneralSecurityException, IOException, URISyntaxException {
-		return new Calendar.Builder(NET_HTTP_TRANSPORT, JACKSON_FACTORY, getServiceCredentials()).build();
+		return new Calendar.Builder(NET_HTTP_TRANSPORT, JSON_FACTORY, getServiceCredentials()).build();
 	}
 
 	private GoogleCredential getServiceCredentials() throws GeneralSecurityException, IOException, URISyntaxException {
 		return new GoogleCredential.Builder()
 		    .setTransport(NET_HTTP_TRANSPORT)
-		    .setJsonFactory(JACKSON_FACTORY)
+		    .setJsonFactory(JSON_FACTORY)
 		    .setServiceAccountId(ACCOUNT_ID)
 		    .setServiceAccountScopes(Collections.singletonList(CalendarScopes.CALENDAR_READONLY))
 		    .setServiceAccountPrivateKeyFromP12File(new File(getClass().getResource(KEY_FILENAME).toURI()))
