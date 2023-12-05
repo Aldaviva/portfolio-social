@@ -16,10 +16,9 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-import twitter4j.Paging;
-import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.User;
 
 @Service
 public class TwitterServiceImpl extends CachedSocialServiceImpl<TwitterStatus, TwitterOwner, CacheIndicators.None> implements TwitterService {
@@ -33,22 +32,15 @@ public class TwitterServiceImpl extends CachedSocialServiceImpl<TwitterStatus, T
 		try {
 			final TwitterStatus twitterStatus = new TwitterStatus();
 
-			final ResponseList<Status> userTimeline = twitterClient.getUserTimeline(owner.getUsername(), new Paging(1, 200));
+			final User userProfile = twitterClient.users().showUser(owner.getUsername());
+			final Status status = userProfile.getStatus();
 
-			Status latestNonReplyStatus = null;
-			for (final Status status : userTimeline) {
-				if (status.getInReplyToUserId() == -1) {
-					latestNonReplyStatus = status;
-					break;
-				}
-			}
-
-			if (latestNonReplyStatus != null) {
-				twitterStatus.setBody(expandShortUrls(latestNonReplyStatus.getText(), SHORT_URL_PATTERNS));
-				twitterStatus.setCreated(new DateTime(latestNonReplyStatus.getCreatedAt()));
+			if (status != null) {
+				twitterStatus.setBody(expandShortUrls(status.getText(), SHORT_URL_PATTERNS));
+				twitterStatus.setCreated(new DateTime(status.getCreatedAt()));
 				return new NonCachingResult<>(twitterStatus);
 			} else {
-				throw new SocialException.TwitterException("The last 200 tweets from " + owner.getUsername() + " were replies, and we want a non-reply tweet.");
+				throw new SocialException.TwitterException("Could not get most recent tweet from " + owner.getUsername());
 			}
 
 		} catch (final twitter4j.TwitterException e) {
