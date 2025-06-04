@@ -59,8 +59,9 @@ public class ApplicationConfig {
 	}
 
 	@Bean
-	public Client httpClient() {
+	public Client httpClient(final JacksonConfig jackson) {
 		final ClientConfig config = new ClientConfig();
+		config.register(jackson); // ContextProvider instance into which Spring has already injected our ObjectMapper
 		config.register(Jackson2Feature.class);
 		config.register(UserAgentFilter.class);
 		config.property(ClientProperties.CONNECT_TIMEOUT, 5000);

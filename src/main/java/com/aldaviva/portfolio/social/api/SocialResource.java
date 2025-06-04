@@ -1,6 +1,8 @@
 package com.aldaviva.portfolio.social.api;
 
 import com.aldaviva.portfolio.social.common.exceptions.SocialException;
+import com.aldaviva.portfolio.social.data.BlueskyOwner;
+import com.aldaviva.portfolio.social.data.BlueskyStatus;
 import com.aldaviva.portfolio.social.data.FlickrOwner;
 import com.aldaviva.portfolio.social.data.FlickrStatus;
 import com.aldaviva.portfolio.social.data.GithubOwner;
@@ -9,6 +11,7 @@ import com.aldaviva.portfolio.social.data.GoogleCalendarOwner;
 import com.aldaviva.portfolio.social.data.GoogleCalendarStatus;
 import com.aldaviva.portfolio.social.data.TwitterOwner;
 import com.aldaviva.portfolio.social.data.TwitterStatus;
+import com.aldaviva.portfolio.social.service.BlueskyService;
 import com.aldaviva.portfolio.social.service.FlickrService;
 import com.aldaviva.portfolio.social.service.GithubService;
 import com.aldaviva.portfolio.social.service.GoogleCalendarService;
@@ -31,6 +34,7 @@ public class SocialResource {
 	@Inject private FlickrService flickrService;
 	@Inject private GoogleCalendarService googleCalendarService;
 	@Inject private GithubService githubService;
+	@Inject private BlueskyService blueskyService;
 
 	@GET
 	@Path("twitter/{username}")
@@ -54,5 +58,11 @@ public class SocialResource {
 	@Path("github/{username}")
 	public GithubStatus getGithubStatus(@PathParam("username") final String username) throws SocialException {
 		return githubService.getCachedCurrentStatus(new GithubOwner(username));
+	}
+
+	@GET
+	@Path("bluesky/{username}")
+	public BlueskyStatus getBlueskyStatus(@PathParam("username") final String username) throws SocialException {
+		return blueskyService.getCachedCurrentStatus(new BlueskyOwner(username));
 	}
 }

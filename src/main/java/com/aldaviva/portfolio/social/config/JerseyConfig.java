@@ -15,9 +15,10 @@ public class JerseyConfig extends ResourceConfig {
 	public static final String ROOT_PATH = "api";
 
 	public JerseyConfig() {
+		//		register(SpringConfig.context.getBean(JacksonConfig.class));
 		register(Jackson2Feature.class);
 		packages(SpringConfig.PACKAGE_SCAN);
-		
+
 		registerInstances(new CrossOriginFilter());
 	}
 

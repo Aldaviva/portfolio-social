@@ -5,6 +5,7 @@
 /src/main/resources/META-INF/prod/twitter.properties
 /src/main/resources/META-INF/prod/thisismyjam.properties
 /src/main/resources/META-INF/prod/flickr.properties
+/src/main/resources/META-INF/prod/bluesky.properties
 /src/main/resources/META-INF/dev/*.properties
 calendar_key.p12
 test-output

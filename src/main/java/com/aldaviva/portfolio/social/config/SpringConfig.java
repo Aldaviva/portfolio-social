@@ -17,11 +17,14 @@ public class SpringConfig implements WebApplicationInitializer {
 
 	static final String PACKAGE_SCAN = "com.aldaviva.portfolio.social";
 
+	//	public static ConfigurableWebApplicationContext context;
+
 	@Override
 	public void onStartup(final ServletContext servletContext) throws ServletException {
 		servletContext.setInitParameter("contextConfigLocation", ""); //prevent Jersey from also initializing Spring
 
 		final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+		//		SpringConfig.context = context;
 		context.scan(PACKAGE_SCAN);
 		servletContext.addListener(new ContextLoaderListener(context));
 

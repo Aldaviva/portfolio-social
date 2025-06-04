@@ -10,7 +10,9 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import org.glassfish.jersey.CommonProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 @Provider
 public class JacksonConfig implements ContextResolver<ObjectMapper> {
 
@@ -23,6 +25,7 @@ public class JacksonConfig implements ContextResolver<ObjectMapper> {
 
 	/** New version of {@link org.glassfish.jersey.jackson.JacksonFeature JacksonFeature} for Jackson 2. */
 	public static final class Jackson2Feature implements Feature {
+
 		@Override
 		public boolean configure(final FeatureContext context) {
 			final String disableMoxy = CommonProperties.MOXY_JSON_FEATURE_DISABLE + '.'
